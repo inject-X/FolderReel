@@ -1,35 +1,39 @@
 name: Xcode Build
 
-  on:
-    push:
-      branches: [ "main" ]
-    pull_request:
-      branches: [ "main" ]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-  jobs:
-    build:
-      runs-on: macos-latest
+jobs:
+  build:
+    name: Build FolderReel
+    runs-on: macos-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Show Xcode version
-          run: xcodebuild -version
+      - name: Show Xcode version
+        run: xcodebuild -version
 
-        - name: Build Release
-          run: |
-            xcodebuild \
-              -project FolderReel.xcodeproj \
-              -scheme FolderReel \
-              -configuration Release \
-              -derivedDataPath build/DerivedData \
-              clean build
+      - name: Build Release
+        run: |
+          xcodebuild \
+            -project FolderReel.xcodeproj \
+            -scheme FolderReel \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            clean build
 
-        - name: Analyze
-          run: |
-            xcodebuild \
-              -project FolderReel.xcodeproj \
-              -scheme FolderReel \
-              -configuration Release \
-              -derivedDataPath build/DerivedData \
+      - name: Analyze
+        run: |
+          xcodebuild \
+            -project FolderReel.xcodeproj \
+            -scheme FolderReel \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            analyze

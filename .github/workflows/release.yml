@@ -1,38 +1,42 @@
 name: Release
 
-  on:
-    push:
-      tags:
-        - "v*"
+on:
+  push:
+    tags:
+      - "v*"
 
-  permissions:
-    contents: write
+permissions:
+  contents: write
 
-  jobs:
-    release:
-      runs-on: macos-latest
+jobs:
+  release:
+    name: Build And Publish Release
+    runs-on: macos-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Build
-          run: |
-            xcodebuild \
-              -project FolderReel.xcodeproj \
-              -scheme FolderReel \
-              -configuration Release \
-              -derivedDataPath build/DerivedData \
-              clean build
+      - name: Show Xcode version
+        run: xcodebuild -version
 
-        - name: Package saver
-          run: |
-            mkdir -p build/release
-            ditto -c -k --sequesterRsrc --keepParent \
-              build/DerivedData/Build/Products/Release/FolderReel.saver \
-              build/release/FolderReel.saver.zip
+      - name: Build
+        run: |
+          xcodebuild \
+            -project FolderReel.xcodeproj \
+            -scheme FolderReel \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            clean build
 
-        - name: Create GitHub Release
-          uses: softprops/action-gh-release@v2
-          with:
-            files: build/release/FolderReel.saver.zip
+      - name: Package saver
+        run: |
+          mkdir -p build/release
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/DerivedData/Build/Products/Release/FolderReel.saver \
+            build/release/FolderReel.saver.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/release/FolderReel.saver.zip
